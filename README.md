@@ -4,14 +4,10 @@ A customer support desk that runs in your terminal, built to learn **6 core Lang
 
 A customer ticket goes in. The graph cleans it, scores it, routes it, looks up the right policy, drafts a reply, has an AI reviewer check it, and finally **pauses for a human to approve** before anything is sent.
 
-```
-$ python main.py
+It runs as a **terminal-style web app** in your browser. Every graph node appears live the moment it finishes, and a sidebar lights up the pattern it belongs to. A plain-terminal version is included too.
 
- HelpHive Support Desk
- P1 SEQUENTIAL   P2 PARALLEL + REDUCER   P3 ROUTING
- P4 RAG          P5 LOOP + TOOLS         P6 HUMAN IN THE LOOP
-
-ticket > 1
+```bash
+python server.py        # opens http://127.0.0.1:8000
 ```
 
 ---
@@ -75,8 +71,12 @@ Every pattern file starts with a header that lists its nodes, the state keys it 
 
 ```
 HelpHive-SupportDesk/
-├── main.py                 run it - streams the graph into the terminal UI
-├── ui.py                   terminal look (rich): banner, live steps, review panel
+├── server.py               run it - web app (FastAPI), streams the graph live
+├── static/
+│   └── index.html          the terminal-style page (no build step, no CDN)
+├── describe.py             what each node means, shared by both front ends
+├── main.py                 optional: the same app in a plain terminal
+├── ui.py                   terminal look (rich) used by main.py
 ├── graph.py                wires every node and edge, compiles with a checkpointer
 ├── state.py                the shared state + the score reducer
 ├── config.py               models and limits
@@ -93,7 +93,7 @@ HelpHive-SupportDesk/
     └── p6_human_in_loop.py
 ```
 
-Read it in this order: `state.py` -> `patterns/p1` ... `p6` -> `graph.py` -> `main.py`.
+Read it in this order: `state.py` -> `patterns/p1` ... `p6` -> `graph.py` -> `server.py` -> `static/index.html`.
 
 ---
 
@@ -140,10 +140,14 @@ python make_pdfs.py
 ## Run
 
 ```bash
-python main.py
+python server.py
 ```
 
-Type `1`, `2` or `3` for a sample ticket, or write your own. Type `exit` to quit.
+The browser opens at <http://127.0.0.1:8000>. Click a sample ticket or type your own, watch the patterns run, then approve the draft or write feedback. Type `clear` to wipe the screen.
+
+Prefer a plain terminal? `python main.py` runs the same graph there (type `1`, `2` or `3` for a sample, `exit` to quit).
+
+**How the web page talks to the graph:** `POST /api/run` starts a ticket and `POST /api/resume` sends your answer at the pause (Pattern 6). Both stream one JSON line per finished node, so the page draws each step live.
 
 | Try this | What it shows |
 |----------|---------------|

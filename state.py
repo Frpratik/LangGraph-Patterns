@@ -44,3 +44,19 @@ class SupportState(TypedDict):
     human_rounds: int
     status: str                # PENDING / SENT / ESCALATED
     final_reply: str
+
+
+def new_state(ticket: str) -> dict:
+    """The starting state for one ticket. Both front ends use this."""
+    return {
+        "raw_ticket": ticket,
+        "scores": {},
+        "messages": [],
+        "draft": "",
+        "review_feedback": "",
+        "is_approved": False,
+        "attempt": 0,
+        "human_rounds": 0,
+        "status": "PENDING",
+        "final_reply": "",
+    }

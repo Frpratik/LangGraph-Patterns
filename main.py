@@ -15,6 +15,7 @@ import uuid
 from langgraph.types import Command
 
 from graph import app
+from state import new_state
 import ui
 
 
@@ -31,21 +32,6 @@ def run_graph(payload, config):
                     ui.show_step(node, update)
 
     return pause_data
-
-
-def new_state(ticket: str) -> dict:
-    return {
-        "raw_ticket": ticket,
-        "scores": {},
-        "messages": [],
-        "draft": "",
-        "review_feedback": "",
-        "is_approved": False,
-        "attempt": 0,
-        "human_rounds": 0,
-        "status": "PENDING",
-        "final_reply": "",
-    }
 
 
 def main():
